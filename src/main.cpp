@@ -1,4 +1,7 @@
 #include <glview/glview.h>
+#include <bps/bps.h>
+#include <bps/screen.h>
+
 #include <ctime>
 #include <cmath>
 #include <cstdint>
@@ -63,7 +66,7 @@ static void frame(void *data)
   float x = -Globals::ScreenWidth * 0.5f;
   float y = Globals::ScreenHeight * 0.5f - textHeight;
 
-  bbutil_render_text(app->mainFont, ss.str().c_str(), x, y, 255, 255, 255, 255);
+  bbutil_render_text(app->mainFont, ss.str().c_str(), x, y, 1.0f, 1.0f, 1.0f, 1.0f);
 
 }
 
@@ -99,12 +102,32 @@ static void resize(unsigned int width, unsigned int height, void*)
   Globals::ScreenHeight = (float)height;
 }
 
+static void event(bps_event_t *event, int domain, int code, void *data)
+{
+  if(domain == screen_get_domain())
+  {
+    screen_event_t screenEvent = screen_event_get_event(event);
+
+    int eventType;
+    screen_get_event_property_iv(screenEvent, SCREEN_PROPERTY_TYPE, &eventType);
+
+    if(eventType == SCREEN_EVENT_MTOUCH_TOUCH || eventType == SCREEN_EVENT_MTOUCH_MOVE)
+    {
+      int pair[2];
+      screen_get_event_property_iv(screenEvent, SCREEN_PROPERTY_SOURCE_POSITION, pair);
+
+      Game::OnScreenTouch(pair[0], pair[1]);
+    }
+  }
+}
+
 int main(int argc, char **argv)
 {
   glview_initialize(GLVIEW_API_OPENGLES_11, &frame);
   glview_register_initialize_callback(&init);
   glview_register_finalize_callback(&fina);
   glview_register_resize_callback(&resize);
+  glview_register_event_callback(&event);
 
   App app;
   app.dfps = 1000.0f / 60.0f;
