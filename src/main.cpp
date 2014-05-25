@@ -58,7 +58,8 @@ static void frame(void *data)
   /* Print FPS */
   static std::stringstream ss;
   ss.str("");
-  ss << "FPS: " << Globals::FPS;
+  //ss << "FPS: " << Globals::FPS;
+  ss << Globals::ScreenWidth << ", " << Globals::ScreenHeight;
 
   float textWidth, textHeight;
   bbutil_measure_text(app->mainFont, ss.str().c_str(), &textWidth, &textHeight);
@@ -67,7 +68,6 @@ static void frame(void *data)
   float y = Globals::ScreenHeight * 0.5f - textHeight;
 
   bbutil_render_text(app->mainFont, ss.str().c_str(), x, y, 1.0f, 1.0f, 1.0f, 1.0f);
-
 }
 
 static void init(void *data)
@@ -82,6 +82,8 @@ static void init(void *data)
 
   /* Load font */
   app->mainFont = bbutil_load_font("./app/native/assets/arial.ttf", 16, 356);
+
+  app->oldTime = GetTicks();
 
   Game::Init();
 }
@@ -111,7 +113,7 @@ static void event(bps_event_t *event, int domain, int code, void *data)
     int eventType;
     screen_get_event_property_iv(screenEvent, SCREEN_PROPERTY_TYPE, &eventType);
 
-    if(eventType == SCREEN_EVENT_MTOUCH_TOUCH || eventType == SCREEN_EVENT_MTOUCH_MOVE)
+    if(eventType == SCREEN_EVENT_MTOUCH_TOUCH/* || eventType == SCREEN_EVENT_MTOUCH_MOVE*/)
     {
       int pair[2];
       screen_get_event_property_iv(screenEvent, SCREEN_PROPERTY_SOURCE_POSITION, pair);

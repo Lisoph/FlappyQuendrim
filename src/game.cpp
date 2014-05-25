@@ -1,66 +1,19 @@
 #include "game.hpp"
 #include <GLES/gl.h>
-#include <cstdlib>
+
+#include <vector>
 
 #include "globals.hpp"
-
 #include "bbutil.h"
 
-int LoadTexture(const char *file, int *width, int *height)
-{
-  unsigned int texId;
-
-  int ret = bbutil_load_texture(file, width, height, NULL, NULL, &texId);
-  if(ret == EXIT_SUCCESS)
-    return texId;
-  return 0;
-}
+#include "bird.hpp"
+#include "level.hpp"
 
 float spriteX = 0.0f, spriteY = 0.0f;
+std::vector<Entity*> entities;
 
-void DrawSprite(unsigned int texture, float x, float y, float w, float h)
-{
-  float vertices[] =
-  {
-    -0.5f * w, 0.5f * h,
-    -0.5f * w, -0.5f * h,
-    0.5f * w, 0.5f * h,
-    0.5f * w, -0.5f * h
-  };
-
-  static float texCoords[] =
-  {
-    0.0f, 1.0f,
-    0.0f, 0.0f,
-    1.0f, 1.0f,
-    1.0f, 0.0f
-  };
-
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-  glVertexPointer(2, GL_FLOAT, 0, vertices);
-  glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
-
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, texture);
-
-  glPushMatrix();
-
-  //glScalef(w, h, 0.0f);
-  //glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-  glTranslatef(x, y, 0.0f);
-
-  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-  glPopMatrix();
-
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
-}
-
-unsigned int myTexture = 0;
-
+Bird *bird = NULL;
+Level *level = NULL;
 
 void Game::Init()
 {
@@ -80,12 +33,18 @@ void Game::Init()
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  myTexture = LoadTexture("./app/native/assets/Kappa.png", NULL, NULL);
+  /* Bird */
+  bird = new Bird(Vector2f(0.0f, 0.0f), Vector2f(0.0f, -0.001f));
+  entities.push_back(bird);
+
+  level = new Level(1234);
+  entities.push_back(level);
 }
 
 void Game::Update()
 {
-
+  for(std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
+    (*it)->Update();
 }
 
 void Game::Draw()
@@ -93,13 +52,14 @@ void Game::Draw()
   glClear(GL_COLOR_BUFFER_BIT);
   glLoadIdentity();
 
-  if(myTexture > 0)
-    DrawSprite(myTexture, spriteX, spriteY, 512.0f, 512.0f);
+  for(std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
+      (*it)->Draw();
 }
 
 void Game::Fina()
 {
-  glDeleteTextures(1, &myTexture);
+  for(std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
+    delete *it;
 }
 
 void Game::OnScreenTouch(int x, int y)
@@ -110,4 +70,6 @@ void Game::OnScreenTouch(int x, int y)
 
   spriteX = trueX;
   spriteY = trueY;
+
+  bird->OnScreenTouch();
 }
