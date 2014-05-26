@@ -50,7 +50,7 @@ static void frame(void *data)
   if(GetTicks() >= app->fpsTimeStart + 1000)
   {
     Globals::FPS = app->frames;
-    app->frames = 0;
+    app->frames = 1;
     app->fpsTimeStart = GetTicks();
   }
   /*else*/ ++app->frames;
@@ -58,8 +58,8 @@ static void frame(void *data)
   /* Print FPS */
   static std::stringstream ss;
   ss.str("");
-  //ss << "FPS: " << Globals::FPS;
-  ss << Globals::ScreenWidth << ", " << Globals::ScreenHeight;
+  ss << "FPS: " << Globals::FPS;
+  //ss << Globals::ScreenWidth << ", " << Globals::ScreenHeight;
 
   float textWidth, textHeight;
   bbutil_measure_text(app->mainFont, ss.str().c_str(), &textWidth, &textHeight);

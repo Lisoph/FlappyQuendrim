@@ -34,10 +34,12 @@ void Game::Init()
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   /* Bird */
-  bird = new Bird(Vector2f(0.0f, 0.0f), Vector2f(0.0f, -0.001f));
+  bird = new Bird(Vector2f(0.0f, 0.0f), Vector2f(0.0f, -0.5f));
   entities.push_back(bird);
 
-  level = new Level(1234);
+  Pipe::LoadResources();
+
+  level = new Level(23764, bird);
   entities.push_back(level);
 }
 
@@ -60,6 +62,8 @@ void Game::Fina()
 {
   for(std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
     delete *it;
+
+  Pipe::FreeResources();
 }
 
 void Game::OnScreenTouch(int x, int y)

@@ -4,6 +4,9 @@
 
 class Bird: public Entity
 {
+public:
+  static const float Width;
+  static const float Height;
 private:
   Vector2f gravity;
   Vector2f vel;
@@ -11,6 +14,8 @@ private:
 public:
   const Vector2f &Gravity() const { return gravity; }
   void SetGravity(const Vector2f &gravity) { this->gravity = gravity; }
+
+  float r, g, b;
 
   Bird();
   Bird(const Vector2f &pos);

@@ -2,7 +2,7 @@
 
 #include <GLES/gl.h>
 
-void Drawing::DrawSprite(unsigned int texture, float x, float y, float w, float h)
+void Drawing::DrawSprite(unsigned int texture, float x, float y, float w, float h, float r, float g, float b)
 {
   static float vertices[] =
   {
@@ -31,8 +31,10 @@ void Drawing::DrawSprite(unsigned int texture, float x, float y, float w, float 
 
   glPushMatrix();
 
-  glScalef(w, h, 0.0f);
   glTranslatef(x, y, 0.0f);
+  glScalef(w, h, 0.0f);
+
+  glColor4f(r, g, b, 1.0f);
 
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -41,3 +43,9 @@ void Drawing::DrawSprite(unsigned int texture, float x, float y, float w, float 
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
   glDisableClientState(GL_VERTEX_ARRAY);
 }
+
+/*void Drawing::DrawSprite(unsigned int texture, float x, float y, float w, float h, float r, float g, float b)
+{
+  glColor4f(r, g, b, 1.0f);
+  DrawSprite(texture, x, y, w, h);
+}*/
