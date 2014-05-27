@@ -23,6 +23,7 @@ public:
   : pos(pos), rot(rot)
   {}
   virtual ~Entity() {}
+
   virtual void Update() {}
   virtual void Draw() {}
 };

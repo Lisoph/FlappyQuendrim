@@ -26,6 +26,8 @@ void Drawing::DrawSprite(unsigned int texture, float x, float y, float w, float 
   glVertexPointer(2, GL_FLOAT, 0, vertices);
   glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
 
+  /* I have no idea where, but something is disabling blending before I draw. */
+  glEnable(GL_BLEND);
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -43,9 +45,3 @@ void Drawing::DrawSprite(unsigned int texture, float x, float y, float w, float 
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
   glDisableClientState(GL_VERTEX_ARRAY);
 }
-
-/*void Drawing::DrawSprite(unsigned int texture, float x, float y, float w, float h, float r, float g, float b)
-{
-  glColor4f(r, g, b, 1.0f);
-  DrawSprite(texture, x, y, w, h);
-}*/

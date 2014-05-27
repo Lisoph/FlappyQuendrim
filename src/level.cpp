@@ -7,8 +7,8 @@
 
 #include <GLES/gl.h>
 
-Level::Level(unsigned int seed, Bird *bird)
-: pipes(), scroll(0), bird(bird)
+Level::Level(unsigned int seed)
+: pipes(), scroll(0)
 {
   std::srand(seed);
 }
@@ -23,8 +23,6 @@ Level::~Level()
 
 void Level::Update()
 {
-  //bird->SetPos(Vector2f());
-
   if(++scroll > 1000) scroll = 1;
 
   if(scroll % (int)(Bird::Width * 0.75) == 0)
@@ -50,30 +48,6 @@ void Level::Update()
       toErase.push_back(it);
       delete pipe;
     }
-
-    /* Collision detection */
-    /*float pipeLeft = pipe->Pos().x - pipe->Width() * 0.5f;
-    float pipeRight = pipe->Pos().x + pipe->Width() * 0.5f;
-    float pipeTop = pipe->Pos().y + pipe->Height() * 0.5f;
-    float pipeBottom = pipe->Pos().y - pipe->Height() * 0.5f;
-
-    float birdLeft = bird->Pos().x - Bird::Width * 0.5f;
-    float birdRight = bird->Pos().x + Bird::Width * 0.5f;
-    float birdTop = bird->Pos().y + Bird::Height * 0.5f;
-    float birdBottom = bird->Pos().y - Bird::Height * 0.5f;
-
-   if(birdLeft < pipeRight && birdRight > pipeLeft && birdTop > pipeBottom && birdBottom < pipeTop)
-   {
-     bird->r = 1.0f;
-     bird->g = 0.0f;
-     bird->b = 0.0f;
-   }
-   else
-   {
-     bird->r = 1.0f;
-     bird->g = 1.0f;
-     bird->b = 1.0f;
-   }*/
   }
 
   for(std::vector<std::vector<Pipe*>::iterator>::iterator it = toErase.begin(); it != toErase.end(); ++it)
@@ -86,29 +60,32 @@ void Level::Draw()
 {
   for(std::vector<Pipe*>::iterator it = pipes.begin(); it != pipes.end(); ++it)
     (*it)->Draw();
+}
 
-#if 0
+bool Level::BirdCollidesWithPipe(Bird *bird, Pipe *pipe) const
+{
+  float pipeLeft = pipe->Pos().x - pipe->Width() * 0.5f;
+  float pipeRight = pipe->Pos().x + pipe->Width() * 0.5f;
+  float pipeTop = pipe->Pos().y + pipe->Height() * 0.5f;
+  float pipeBottom = pipe->Pos().y - pipe->Height() * 0.5f;
+
   float birdLeft = bird->Pos().x - Bird::Width * 0.5f;
   float birdRight = bird->Pos().x + Bird::Width * 0.5f;
   float birdTop = bird->Pos().y + Bird::Height * 0.5f;
   float birdBottom = bird->Pos().y - Bird::Height * 0.5f;
 
-  float vertices[] =
+ if(birdLeft < pipeRight && birdRight > pipeLeft && birdTop > pipeBottom && birdBottom < pipeTop)
+   return true;
+ return false;
+}
+
+bool Level::BirdCollides(Bird *bird) const
+{
+  for(std::vector<Pipe*>::const_iterator it = pipes.begin(); it != pipes.end(); ++it)
   {
-    birdLeft, birdTop,
-    birdLeft, birdBottom,
-    birdRight, birdTop,
-    birdRight, birdBottom
-  };
+    if(BirdCollidesWithPipe(bird, *it))
+      return true;
+  }
 
-  glDisable(GL_TEXTURE_2D);
-  glEnableClientState(GL_VERTEX_ARRAY);
-
-  glColor4f(0.0f, 1.0f, 0.0f, 0.5f);
-  glVertexPointer(2, GL_FLOAT, 0, vertices);
-  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-  glDisableClientState(GL_VERTEX_ARRAY);
-  glEnable(GL_TEXTURE_2D);
-#endif
+  return false;
 }

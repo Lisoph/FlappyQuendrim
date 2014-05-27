@@ -33,14 +33,14 @@ void Game::Init()
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  /* Bird */
-  bird = new Bird(Vector2f(0.0f, 0.0f), Vector2f(0.0f, -0.5f));
-  entities.push_back(bird);
-
   Pipe::LoadResources();
 
-  level = new Level(23764, bird);
+  level = new Level(23764);
   entities.push_back(level);
+
+  /* Bird */
+  bird = new Bird(Vector2f(0.0f, 0.0f), Vector2f(0.0f, -0.5f), level);
+  entities.push_back(bird);
 }
 
 void Game::Update()
