@@ -31,5 +31,7 @@ public:
   virtual void Update();
   virtual void Draw();
 
+  void Respawn();
+
   void OnScreenTouch();
 };

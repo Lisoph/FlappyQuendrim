@@ -50,9 +50,11 @@ void Bird::Update()
 
   if(level->BirdCollides(this))
   {
-    r = 0.8f;
+    /*r = 1.0f;
     g = 0.0f;
-    b = 0.0f;
+    b = 0.0f;*/
+
+    Respawn();
   }
   else
   {
@@ -69,4 +71,11 @@ void Bird::OnScreenTouch()
 {
   if(vel.y < 0) vel.y = 0;
   vel += Vector2f(0.0f, 15.0f); /* Pretty good */
+}
+
+void Bird::Respawn()
+{
+  level->Reset();
+
+  vel = pos = Vector2f();
 }

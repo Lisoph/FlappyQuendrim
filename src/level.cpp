@@ -8,7 +8,7 @@
 #include <GLES/gl.h>
 
 Level::Level(unsigned int seed)
-: pipes(), scroll(0)
+  : seed(seed), pipes(), scroll(0), speed(LEVEL_DEFAULT_SPEED)
 {
   std::srand(seed);
 }
@@ -23,7 +23,8 @@ Level::~Level()
 
 void Level::Update()
 {
-  if(++scroll > 1000) scroll = 1;
+  scroll += /*speed*/ 1;
+  if(scroll > 1000) scroll = 1;
 
   if(scroll % (int)(Bird::Width * 0.75) == 0)
   {
@@ -40,7 +41,7 @@ void Level::Update()
   {
     Pipe *pipe = *it;
 
-    pipe->SetPos(pipe->Pos() - Vector2f(2 * Globals::DeltaTime, 0.0f));
+    pipe->SetPos(pipe->Pos() - Vector2f(speed * Globals::DeltaTime, 0.0f));
 
     /* Check if a pipe is beyond the far left, if so delete it */
     if(pipe->Pos().x < -Globals::ScreenWidth * 0.5f - pipe->Width() * 0.5f)
@@ -88,4 +89,14 @@ bool Level::BirdCollides(Bird *bird) const
   }
 
   return false;
+}
+
+void Level::Reset()
+{
+  scroll = 0;
+  std::srand(seed);
+  for(std::vector<Pipe*>::iterator it = pipes.begin(); it != pipes.end(); ++it)
+    delete *it;
+
+  pipes.clear();
 }
